@@ -172,6 +172,7 @@ func main() {
 	}
 
 	registry := prometheus.NewRegistry()
+	apiServerAvailableResources = discovery(kubeClient)
 	registerCollectors(registry, kubeClient, collectors)
 	metricsServer(registry, options.port)
 }
@@ -277,4 +278,12 @@ func registerCollectors(registry prometheus.Registerer, kubeClient clientset.Int
 	}
 
 	glog.Infof("Active collectors: %s", strings.Join(activeCollectors, ","))
+}
+
+func discovery(kubeClient clientset.Interface) map[string]string {
+	glog.Infof("%#v", kubeClient.Discovery().ServerGroups())
+	glog.Infof("%#v", kubeClient.Discovery().ServerPreferredNamespacedResources())
+	glog.Infof("%#v", kubeClient.Discovery().ServerPreferredResources())
+	glog.Infof("%#v", kubeClient.Discovery().ServerResources())
+	glog.Infof("%#v", kubeClient.Discovery().ServerVersion())
 }
